@@ -1,0 +1,120 @@
+﻿@using System.Data
+@model DataTable
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h3>@TempData["Success"]</h3>
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class=" text-white py-2">State List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-3">
+                <div class="input-group">
+                    <input  id="Sample_1" type="search" placeholder="Search State" class="form-control" />
+                    
+                </div>
+
+            </div>
+            <div class="col-9 text-end">
+                <a asp-controller="LOC_State" asp-action="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Add New State
+                </a>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped" >
+        <tr>
+        <thead>
+        <th>
+            StateID
+        </th>
+        <th>
+            State Name
+        </th>
+        <th>
+            State Code
+        </th>
+        <th>
+            Country Name
+        </th>
+        <th>
+            Country ID
+        </th>
+
+        <th>
+            Created
+        </th>
+        <th>
+            Modified
+        </th>
+        <th>
+
+        </th>
+        </thead>
+
+
+        <tbody id="Sample_2">
+                @foreach (DataRow dr in Model.Rows)
+                {
+                <tr>
+                    <td>@dr["StateID"]</td>
+                    <td>@dr["StateName"]</td>
+                    <td>@dr["StateCode"]</td>
+                    <td>@dr["CountryName"]</td>
+                    <td>@dr["CountryID"]</td>
+                    <td>@Convert.ToDateTime(dr["Created"]).ToString("dd-MM-yy")</td>
+                    <td>@Convert.ToDateTime(dr["Modified"]).ToString("dd-MM-yy")</td>
+
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+
+                            <a asp-area="LOC_State" asp-controller="LOC_State" asp-action="Delete" asp-route-StateID="@dr["StateID"]" class="btn btn-danger mx-2" onclick="fun1()">
+                                <i class="bi bi-trash-fill"></i> Delete
+                            </a>
+
+                            <a asp-area="LOC_State" asp-controller="LOC_State" asp-action="Create" asp-route-StateID="@dr["StateID"]" class="btn btn-primary mx-2">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+
+
+                        </div>
+                    </td>
+                </tr>
+
+                }
+        </tbody>
+        </tr>
+    </table>
+</div>
+
+
+</div>
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+            $("#Sample_1").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#Sample_2 tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
+
+        function fun1() {
+            if (confirm("Are you sure you want to delete?")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
+}
+
+
