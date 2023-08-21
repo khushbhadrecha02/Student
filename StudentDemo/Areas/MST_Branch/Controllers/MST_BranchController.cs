@@ -17,7 +17,8 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
             Configuration = configuration;
         }
         #endregion
-        #region SelectAll
+
+        #region Index
         public IActionResult Index()
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
@@ -32,6 +33,7 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
             return View("Index", dt);
         }
         #endregion
+
         #region Delete
         public IActionResult Delete(int BranchID)
         {
@@ -47,7 +49,8 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
             return RedirectToAction("Index");
         }
         #endregion
-        #region InsertEdit
+
+        #region Create
         public IActionResult Create(int? BranchID)
         {
             if (BranchID != null)
@@ -83,6 +86,9 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
 
 
         }
+        #endregion
+
+        #region Save
 
 
         [HttpPost]

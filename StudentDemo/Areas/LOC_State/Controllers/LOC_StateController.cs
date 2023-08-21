@@ -19,7 +19,7 @@ namespace StudentDemo.Areas.LOC_State.Controllers
         }
         #endregion
 
-        #region SelectAll
+        #region Index
         public IActionResult Index()
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");

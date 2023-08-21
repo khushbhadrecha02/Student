@@ -16,10 +16,8 @@
         <div class="row pb-3">
             <div class="col-3">
                 <div class="input-group">
-                    <input id="search-input" type="search" placeholder="Search Student" class="form-control" />
-                    <button id="search-button" type="button" class="btn btn-primary">
-                        <i class="bi bi-search"></i>
-                    </button>
+                    <input id="Sample_1" type="search" placeholder="Search Student" class="form-control" />
+                    
                 </div>
 
             </div>
@@ -33,11 +31,11 @@
     <table class="table table-bordered table-striped">
         <tr>
         <thead>
-        <th>StudentID</th>
+        
         <th>StudentName</th>
-        <th>BranchID</th>
+        
         <th>BranchName</th>
-        <th>CityID</th>
+        
         <th>CityName</th>
         <th>MobileNoStudent</th>
         <th>MobileNoFather</th>
@@ -54,15 +52,15 @@
         </thead>
 
 
-        <tbody>
+        <tbody id="Sample_2">
                 @foreach (DataRow dr in Model.Rows)
                 {
                 <tr>
-                    <td>@dr["StudentID"]</td>
+                    
                     <td>@dr["StudentName"]</td>
-                    <td>@dr["BranchID"]</td>
+                    
                     <td>@dr["BranchName"]</td>
-                    <td>@dr["CityID"]</td>
+                    
                     <td>@dr["CityName"]</td>
                     <td>@dr["MobileNoStudent"]</td>
                     <td>@dr["MobileNoFather"]</td>
@@ -103,6 +101,14 @@
 @section Scripts
     {
     <script>
+        $(document).ready(function () {
+            $("#Sample_1").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#Sample_2 tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
         function fun1() {
             if (confirm("Are you sure you want to delete?")) {
                 return true;

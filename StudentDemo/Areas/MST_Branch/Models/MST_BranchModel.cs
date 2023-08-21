@@ -15,4 +15,9 @@ namespace StudentDemo.Areas.MST_Branch.Models
         public string BranchCode { get; set; }
 
     }
+    public class MST_Branch_DropDownModel
+    {
+        public int BranchID { get; set; }
+        public string BranchName { get; set; }
+    }
 }

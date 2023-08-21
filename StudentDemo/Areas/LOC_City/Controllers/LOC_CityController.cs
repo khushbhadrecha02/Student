@@ -19,7 +19,7 @@ namespace StudentDemo.Areas.LOC_City.Controllers
         }
         #endregion
 
-        #region SelectAll
+        #region Index
         public IActionResult Index()
         {
            

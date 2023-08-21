@@ -16,10 +16,8 @@
         <div class="row pb-3">
             <div class="col-3">
                 <div class="input-group">
-                    <input id="search-input" type="search" placeholder="Search City" class="form-control" />
-                    <button id="search-button" type="button" class="btn btn-primary">
-                        <i class="bi bi-search"></i>
-                    </button>
+                    <input id="Sample_1" type="search" placeholder="Search City" class="form-control" />
+                    
                 </div>
 
             </div>
@@ -33,24 +31,18 @@
     <table class="table table-bordered table-striped">
         <tr>
         <thead>
-        <th>
-            CityID
-        </th>
+        
         <th>
             City Name
         </th>
         <th>
             City Code
         </th>
-        <th>
-            CountryID
-        </th>
+        
         <th>
             Country Name
         </th>
-        <th>
-            StateID
-        </th>
+        
         <th>
             State Name
         </th>
@@ -67,16 +59,14 @@
         </thead>
 
 
-        <tbody>
+        <tbody id="Sample_2">
                 @foreach (DataRow dr in Model.Rows)
                 {
                 <tr>
-                    <td>@dr["CityID"]</td>
+                    
                     <td>@dr["CityName"]</td>
                     <td>@dr["CityCode"]</td>
-                    <td>@dr["CountryID"]</td>
                     <td>@dr["CountryName"]</td>
-                    <td>@dr["StateID"]</td>
                     <td>@dr["StateName"]</td>
                     <td>@Convert.ToDateTime(dr["CreationDate"]).ToString("dd-MM-yy")</td>
                     <td>@Convert.ToDateTime(dr["Modified"]).ToString("dd-MM-yy")</td>
@@ -108,6 +98,14 @@
 @section Scripts
     {
     <script>
+        $(document).ready(function () {
+            $("#Sample_1").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#Sample_2 tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
         function fun1() {
             if (confirm("Are you sure you want to delete?")) {
                 return true;

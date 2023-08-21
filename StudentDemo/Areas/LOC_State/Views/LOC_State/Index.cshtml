@@ -31,9 +31,7 @@
     <table class="table table-bordered table-striped" >
         <tr>
         <thead>
-        <th>
-            StateID
-        </th>
+        
         <th>
             State Name
         </th>
@@ -43,9 +41,7 @@
         <th>
             Country Name
         </th>
-        <th>
-            Country ID
-        </th>
+        
 
         <th>
             Created
@@ -63,11 +59,11 @@
                 @foreach (DataRow dr in Model.Rows)
                 {
                 <tr>
-                    <td>@dr["StateID"]</td>
+                    
                     <td>@dr["StateName"]</td>
                     <td>@dr["StateCode"]</td>
                     <td>@dr["CountryName"]</td>
-                    <td>@dr["CountryID"]</td>
+                    
                     <td>@Convert.ToDateTime(dr["Created"]).ToString("dd-MM-yy")</td>
                     <td>@Convert.ToDateTime(dr["Modified"]).ToString("dd-MM-yy")</td>
 

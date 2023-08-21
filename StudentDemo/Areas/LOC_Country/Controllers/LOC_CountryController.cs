@@ -17,7 +17,7 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
         }
         #endregion
 
-        #region SelectAll
+        #region Index
         public IActionResult Index()
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
@@ -49,7 +49,7 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
         }
         #endregion
 
-        #region InsertEdit
+        #region Create
         public IActionResult Create(int? CountryID)
         {
             if(CountryID != null)
@@ -85,8 +85,9 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
             
             
         }
+        #endregion
 
-        
+        #region Save
         [HttpPost]
         public IActionResult Save(LOC_CountryModel modelLOC_Country)
         {

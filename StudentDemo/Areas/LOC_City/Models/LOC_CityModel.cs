@@ -20,4 +20,9 @@ namespace StudentDemo.Areas.LOC_City.Models
 
         public int CountryID { get; set; }
     }
+    public class LOC_City_DropDownModel
+    {
+        public int CityID { get; set; }
+        public string CityName { get; set; }
+    }
 }
