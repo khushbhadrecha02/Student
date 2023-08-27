@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="card-body p-4">
-        <form method="post" asp-controller="MST_Student" asp-action="Save" class="row">
+        <form method="post" asp-controller="MST_Student" asp-action="Save" class="row" enctype="multipart/form-data">
             <div class="border p-3 ">
                 <div class="form-floating py-2 col-12">
                     <select class="form-control border-0 shadow" asp-for="BranchID" asp-items="@(new SelectList(ViewBag.BranchList,"BranchID","BranchName"))">
@@ -31,6 +31,7 @@
                 @*@<div asp-validation-summary="ModelOnly"></div>*@
                 <div class="form-floating py-2 col-12">
                     <input asp-for="StudentID" hidden />
+                    <input asp-for="PhotoPath" hidden/>
                     <input type="text" class="form-control border-0 shadow" asp-for="StudentName" />
                     <label class="ms-2" asp-for="StudentName"></label>
                     <span asp-validation-for="StudentName" class="text-danger"></span>
@@ -85,6 +86,11 @@
                     <input type="datetime" class="form-control border-0 shadow" asp-for="Address" />
                     <label class="ms-2" asp-for="Address"></label>
                     <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+                <div class=" form-floating py-2 col-12">
+                    <input type="file" class="form-control border-0 shadow" asp-for="File" />
+                    <label class="ms-2" asp-for="PhotoPath"></label>
+                    <span asp-validation-for="File" class="text-danger"></span>
                 </div>
 
 

@@ -23,4 +23,9 @@ namespace StudentDemo.Areas.LOC_Country.Models
         public int CountryID { get; set; }
         public string CountryName { get; set; } 
     }
+    public static class LOC_Country_SearchModel
+    {
+        public static string CountryName { get; set; }
+        public static string CountryCode { get; set; }
+    }
 }

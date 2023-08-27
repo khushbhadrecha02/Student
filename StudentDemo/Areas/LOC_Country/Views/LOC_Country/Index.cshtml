@@ -1,9 +1,32 @@
 ﻿@using  System.Data
-@model DataTable
+@using StudentDemo.Areas.LOC_Country.Models;
+@model DataTable 
+
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h3>@TempData["Success"]</h3>
+<div class="row">
+    <form  asp-controller="LOC_Country" asp-action="Search" class="row g-3">
+        <div class="col-3">
+            <input type="text" asp-for="@LOC_Country_SearchModel.CountryName"  class="form-control" placeholder="Country">
+        </div>
+        
+       <div class="col-3">
+            <input type="text" asp-for="@LOC_Country_SearchModel.CountryCode" class="form-control" placeholder="Country Code">
+        </div>
+        <div class="col-3">
+            <button type="submit" class="btn btn-primary" >Search</button>
+            <a asp-area="LOC_Country" asp-controller="LOC_Country" asp-action="Index" class="btn btn-danger">
+                 Clear
+            </a>
+
+        </div>
+        
+    </form>
+</div>
+
 <div class="card shadow border-0 mt-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">

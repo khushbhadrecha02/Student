@@ -20,6 +20,7 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
         #region Index
         public IActionResult Index()
         {
+            
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             SqlConnection conn = new SqlConnection(str);
             conn.Open();
@@ -127,6 +128,30 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
             
             return RedirectToAction("Index");
         }
+        #endregion
+        #region Save
+        //[HttpPost]
+        public IActionResult Search(string CountryName, string CountryCode)
+        {
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            SqlConnection conn = new SqlConnection(str);
+            conn.Open();
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = "PR_Country_SelectByPage";
+            cmd.Parameters.Add("@CountryName", SqlDbType.VarChar).Value = string.IsNullOrEmpty(CountryName) ? DBNull.Value : (object)CountryName;
+            cmd.Parameters.Add("@CountryCode", SqlDbType.VarChar).Value = string.IsNullOrEmpty(CountryCode) ? DBNull.Value : (object)CountryCode;
+
+            DataTable dt = new DataTable();
+            SqlDataReader sdr = cmd.ExecuteReader();
+            dt.Load(sdr);
+            conn.Close();
+
+
+            return View("Index", dt);
+            //return RedirectToAction("Index");
+        }
+
         #endregion
 
     }
