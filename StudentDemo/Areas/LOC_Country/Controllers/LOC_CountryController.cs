@@ -20,7 +20,6 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
         #region Index
         public IActionResult Index()
         {
-            
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             SqlConnection conn = new SqlConnection(str);
             conn.Open();
@@ -30,8 +29,16 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
             DataTable dt = new DataTable();
             SqlDataReader sdr = cmd.ExecuteReader();
             dt.Load(sdr);
-            return View("Index", dt);
+
+            var viewModel = new LOC_Country_ViewModel
+            {
+                CountryDataTable = dt,
+                SearchModel = new LOC_Country_SearchModel() // You can initialize properties if needed
+            };
+
+            return View("Index",viewModel);
         }
+
         #endregion
 
         #region Delete
@@ -131,7 +138,7 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
         #endregion
         #region Save
         //[HttpPost]
-        public IActionResult Search(string CountryName, string CountryCode)
+        public IActionResult Search(LOC_Country_SearchModel searchModel)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             SqlConnection conn = new SqlConnection(str);
@@ -139,18 +146,23 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
             SqlCommand cmd = conn.CreateCommand();
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.CommandText = "PR_Country_SelectByPage";
-            cmd.Parameters.Add("@CountryName", SqlDbType.VarChar).Value = string.IsNullOrEmpty(CountryName) ? DBNull.Value : (object)CountryName;
-            cmd.Parameters.Add("@CountryCode", SqlDbType.VarChar).Value = string.IsNullOrEmpty(CountryCode) ? DBNull.Value : (object)CountryCode;
+            cmd.Parameters.Add("@CountryName", SqlDbType.VarChar).Value = string.IsNullOrEmpty(searchModel.CountryName) ? DBNull.Value : (object)searchModel.CountryName;
+            cmd.Parameters.Add("@CountryCode", SqlDbType.VarChar).Value = string.IsNullOrEmpty(searchModel.CountryCode) ? DBNull.Value : (object)searchModel.CountryCode;
 
             DataTable dt = new DataTable();
             SqlDataReader sdr = cmd.ExecuteReader();
             dt.Load(sdr);
             conn.Close();
 
+            var viewModel = new LOC_Country_ViewModel
+            {
+                CountryDataTable = dt,
+                SearchModel = searchModel
+            };
 
-            return View("Index", dt);
-            //return RedirectToAction("Index");
+            return View("Index", viewModel);
         }
+
 
         #endregion
 

@@ -1,6 +1,6 @@
 ﻿@using  System.Data
 @using StudentDemo.Areas.LOC_Country.Models;
-@model DataTable 
+@model LOC_Country_ViewModel
 
 
 @{
@@ -8,22 +8,20 @@
 }
 <h3>@TempData["Success"]</h3>
 <div class="row">
-    <form  asp-controller="LOC_Country" asp-action="Search" class="row g-3">
+    <form asp-controller="LOC_Country" asp-action="Search" class="row g-3">
         <div class="col-3">
-            <input type="text" asp-for="@LOC_Country_SearchModel.CountryName"  class="form-control" placeholder="Country">
+            <input type="text" asp-for="@Model.SearchModel.CountryName" class="form-control" placeholder="Country">
         </div>
-        
-       <div class="col-3">
-            <input type="text" asp-for="@LOC_Country_SearchModel.CountryCode" class="form-control" placeholder="Country Code">
-        </div>
-        <div class="col-3">
-            <button type="submit" class="btn btn-primary" >Search</button>
-            <a asp-area="LOC_Country" asp-controller="LOC_Country" asp-action="Index" class="btn btn-danger">
-                 Clear
-            </a>
 
+        <div class="col-3">
+            <input type="text" asp-for="@Model.SearchModel.CountryCode" class="form-control" placeholder="Country Code">
         </div>
-        
+        <div class="col-3">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-area="LOC_Country" asp-controller="LOC_Country" asp-action="Index" class="btn btn-danger">
+                Clear
+            </a>
+        </div>
     </form>
 </div>
 
@@ -75,7 +73,7 @@
             
             
                 <tbody id="Sample_2">
-                @foreach (DataRow dr in Model.Rows)
+                @foreach (DataRow dr in Model.CountryDataTable.Rows)
                 {
                 <tr>
                 
