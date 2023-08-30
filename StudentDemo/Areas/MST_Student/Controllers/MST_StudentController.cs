@@ -2,10 +2,9 @@
 using System.Data.SqlClient;
 using System.Data;
 using StudentDemo.Areas.LOC_City.Models;
-using StudentDemo.Areas.LOC_Country.Models;
-using StudentDemo.Areas.LOC_State.Models;
 using StudentDemo.Areas.MST_Branch.Models;
 using StudentDemo.Areas.MST_Student.Models;
+using StudentDemo.DAL;
 
 namespace StudentDemo.Areas.MST_Student.Controllers
 {
@@ -25,14 +24,8 @@ namespace StudentDemo.Areas.MST_Student.Controllers
         public IActionResult Index()
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_Student_SelectAll";
-            DataTable dt = new DataTable();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            dt.Load(sdr);
+            MST_DAL dal =new MST_DAL();
+            DataTable dt = dal.PR_Student_SelectAll(str);
             return View("Index", dt);
         }
         #endregion
@@ -59,24 +52,11 @@ namespace StudentDemo.Areas.MST_Student.Controllers
             #region ComboBox
 
             string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn1 = new SqlConnection(connstr);
-            conn1.Open();
-            SqlCommand cmd1 = conn1.CreateCommand();
-            SqlCommand cmd2 = conn1.CreateCommand();
-            cmd1.CommandType = CommandType.StoredProcedure;
-            cmd2.CommandType = CommandType.StoredProcedure;
-            cmd1.CommandText = "PR_Branch_SelectByComboBox";
-            cmd2.CommandText = "PR_City_SelectByComboBox";
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
-            SqlDataReader sdr1 = cmd1.ExecuteReader();
-            dt1.Load(sdr1);
-            sdr1.Close(); 
+            MST_DAL dal = new MST_DAL();
+            
+            DataTable dt1 = dal.PR_Branch_SelectByComboBox(connstr);
+            DataTable dt2 = dal.PR_City_SelectByComboBox(connstr) ;
 
-            SqlDataReader sdr2 = cmd2.ExecuteReader(); 
-            dt2.Load(sdr2);
-            sdr2.Close(); 
-            conn1.Close();
 
             List<MST_Branch_DropDownModel> list = new List<MST_Branch_DropDownModel>();
             List<LOC_City_DropDownModel> list1 = new List<LOC_City_DropDownModel>();
@@ -107,16 +87,7 @@ namespace StudentDemo.Areas.MST_Student.Controllers
             if (StudentID != null)
             {
                 string str = this.Configuration.GetConnectionString("myConnectionStrings");
-                SqlConnection conn = new SqlConnection(str);
-                conn.Open();
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "PR_Student_SelectByPK";
-                cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = StudentID;
-                DataTable dt = new DataTable();
-                SqlDataReader sdr = cmd.ExecuteReader();
-                dt.Load(sdr);
-                conn.Close();
+                DataTable dt = dal.PR_Student_SelectByPK(str, StudentID);
                 MST_StudentModel modelMST_Student = new MST_StudentModel();
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -152,10 +123,7 @@ namespace StudentDemo.Areas.MST_Student.Controllers
         public IActionResult Save(MST_StudentModel modelMST_Student)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
+            MST_DAL dal =new MST_DAL();
             if (modelMST_Student.File != null)
             {
                 String FilePath = "wwwroot\\Upload";
@@ -173,33 +141,53 @@ namespace StudentDemo.Areas.MST_Student.Controllers
             }
             if (modelMST_Student.StudentID == null)
             {
-                cmd.CommandText = "PR_Student_Insert";
+                dal.PR_Student_Insert
+                (
+                    str,
+                    modelMST_Student.StudentName,
+                    modelMST_Student.BranchID,
+                    modelMST_Student.CityID,
+                    modelMST_Student.MobileNoStudent,
+                    modelMST_Student.MobileNoFather,
+                    modelMST_Student.Address,
+                    modelMST_Student.Email,
+                    modelMST_Student.Gender,
+                    modelMST_Student.IsActive,
+                    modelMST_Student.age,
+                    modelMST_Student.BirthDate,
+                    modelMST_Student.PhotoPath,
+                    modelMST_Student.Password
+                );
 
             }
             else
             {
-                cmd.CommandText = "PR_Student_UpdateByPK";
-                cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = modelMST_Student.StudentID;
+                dal.PR_Student_UpdateByPK
+                (
+                    str,
+                    modelMST_Student.StudentID.Value,
+                    modelMST_Student.StudentName,
+                    modelMST_Student.BranchID,
+                    modelMST_Student.CityID,
+                    modelMST_Student.MobileNoStudent,
+                    modelMST_Student.MobileNoFather,
+                    modelMST_Student.Address,
+                    modelMST_Student.Email,
+                    modelMST_Student.Gender,
+                    modelMST_Student.IsActive,
+                    modelMST_Student.age,
+                    modelMST_Student.BirthDate,
+                    modelMST_Student.PhotoPath,
+                    modelMST_Student.Password
+                );
 
             }
 
-            cmd.Parameters.Add("@StudentName", SqlDbType.VarChar).Value = modelMST_Student.StudentName;
-            cmd.Parameters.Add("@BranchID", SqlDbType.VarChar).Value = modelMST_Student.BranchID;
-            cmd.Parameters.Add("@CityID", SqlDbType.VarChar).Value = modelMST_Student.CityID;
-            cmd.Parameters.Add("@Email", SqlDbType.VarChar).Value = modelMST_Student.Email;
-            cmd.Parameters.Add("@MobileNoStudent", SqlDbType.VarChar).Value = modelMST_Student.MobileNoStudent;
-            cmd.Parameters.Add("@MobileNoFather", SqlDbType.VarChar).Value = modelMST_Student.MobileNoFather;
-            cmd.Parameters.Add("@Address", SqlDbType.VarChar).Value = modelMST_Student.Address;
-            cmd.Parameters.Add("@Gender", SqlDbType.VarChar).Value = modelMST_Student.Gender;
-            cmd.Parameters.Add("@BirthDate", SqlDbType.VarChar).Value = modelMST_Student.BirthDate;
-            cmd.Parameters.Add("@IsActive", SqlDbType.VarChar).Value = modelMST_Student.IsActive;
-            cmd.Parameters.Add("@age", SqlDbType.VarChar).Value = modelMST_Student.age;
-            cmd.Parameters.Add("@Password", SqlDbType.VarChar).Value = modelMST_Student.Password;
-            cmd.Parameters.Add("@PhotoPath", SqlDbType.VarChar).Value = modelMST_Student.PhotoPath;
+            
 
 
-            if (Convert.ToBoolean(cmd.ExecuteNonQuery()))
-            {
+            
+            
                 if (modelMST_Student.StudentID == null)
                 {
                     TempData["Success"] = ("Student Added Successfully");
@@ -211,9 +199,9 @@ namespace StudentDemo.Areas.MST_Student.Controllers
 
                 }
 
-            }
             
-            conn.Close();
+            
+            
 
             return RedirectToAction("Index");
         }
