@@ -133,6 +133,7 @@ namespace StudentDemo.Areas.MST_Student.Controllers
                     modelMST_Student.IsActive = Convert.ToString(dr["IsActive"]);
                     modelMST_Student.age = Convert.ToInt32(dr["age"]);
                     modelMST_Student.BirthDate = Convert.ToDateTime(dr["BirthDate"]);
+                    modelMST_Student.PhotoPath = Convert.ToString(dr["PhotoPath"]);
                     modelMST_Student.Password = Convert.ToString(dr["Password"]);
 
                 }
@@ -155,6 +156,21 @@ namespace StudentDemo.Areas.MST_Student.Controllers
             conn.Open();
             SqlCommand cmd = conn.CreateCommand();
             cmd.CommandType = CommandType.StoredProcedure;
+            if (modelMST_Student.File != null)
+            {
+                String FilePath = "wwwroot\\Upload";
+                string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string fileNameWithPath = Path.Combine(path, modelMST_Student.File.FileName);
+                modelMST_Student.PhotoPath = "~" + FilePath.Replace("wwwroot\\", "/") + "/" + modelMST_Student.File.FileName;
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    modelMST_Student.File.CopyTo(stream);
+                }
+            }
             if (modelMST_Student.StudentID == null)
             {
                 cmd.CommandText = "PR_Student_Insert";
@@ -166,6 +182,7 @@ namespace StudentDemo.Areas.MST_Student.Controllers
                 cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = modelMST_Student.StudentID;
 
             }
+
             cmd.Parameters.Add("@StudentName", SqlDbType.VarChar).Value = modelMST_Student.StudentName;
             cmd.Parameters.Add("@BranchID", SqlDbType.VarChar).Value = modelMST_Student.BranchID;
             cmd.Parameters.Add("@CityID", SqlDbType.VarChar).Value = modelMST_Student.CityID;
@@ -178,7 +195,9 @@ namespace StudentDemo.Areas.MST_Student.Controllers
             cmd.Parameters.Add("@IsActive", SqlDbType.VarChar).Value = modelMST_Student.IsActive;
             cmd.Parameters.Add("@age", SqlDbType.VarChar).Value = modelMST_Student.age;
             cmd.Parameters.Add("@Password", SqlDbType.VarChar).Value = modelMST_Student.Password;
-            
+            cmd.Parameters.Add("@PhotoPath", SqlDbType.VarChar).Value = modelMST_Student.PhotoPath;
+
+
             if (Convert.ToBoolean(cmd.ExecuteNonQuery()))
             {
                 if (modelMST_Student.StudentID == null)
@@ -193,6 +212,7 @@ namespace StudentDemo.Areas.MST_Student.Controllers
                 }
 
             }
+            
             conn.Close();
 
             return RedirectToAction("Index");

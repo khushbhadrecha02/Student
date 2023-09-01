@@ -15,5 +15,7 @@
         public string Password { get; set; }
         public string Email { get; set; }
         public string Gender { get; set; }
+        public IFormFile File { get; set; }
+        public string PhotoPath { get; set; }
     }
 }
