@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 namespace StudentDemo.Areas.LOC_Country.Models
 {
@@ -14,8 +15,7 @@ namespace StudentDemo.Areas.LOC_Country.Models
         [DisplayName("Country Code")]
         public string CountryCode { get; set; }
 
-        public DateTime Created { get; set; }
-        public DateTime Modified { get; set; }
+
 
     }
     public class LOC_Country_DropDownModel
@@ -23,4 +23,16 @@ namespace StudentDemo.Areas.LOC_Country.Models
         public int CountryID { get; set; }
         public string CountryName { get; set; } 
     }
+    public class LOC_Country_SearchModel
+    {
+        
+        public  string? CountryName { get; set; }
+        public string? CountryCode { get; set; }
+    }
+    public class LOC_Country_ViewModel
+    {
+        public DataTable CountryDataTable { get; set; }
+        public LOC_Country_SearchModel SearchModel { get; set; }
+    }
+
 }

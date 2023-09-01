@@ -4,6 +4,7 @@ using System.Data;
 using StudentDemo.Areas.LOC_City.Models;
 using StudentDemo.Areas.LOC_Country.Models;
 using StudentDemo.Areas.LOC_State.Models;
+using StudentDemo.DAL;
 
 namespace StudentDemo.Areas.LOC_City.Controllers
 {
@@ -24,14 +25,8 @@ namespace StudentDemo.Areas.LOC_City.Controllers
         {
            
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_City_SelectAll";
-            DataTable dt = new DataTable();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            dt.Load(sdr);
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt = dal.PR_City_SelectAll(str);
             return View("Index", dt);
         }
         #endregion
@@ -40,14 +35,8 @@ namespace StudentDemo.Areas.LOC_City.Controllers
         public IActionResult Delete(int CityID)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_City_DeleteByPK";
-            cmd.Parameters.Add("@CityID", SqlDbType.Int).Value = CityID;
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            LOC_DAL dAL = new LOC_DAL();
+            dAL.PR_City_DeleteByPK(str, CityID);
             return RedirectToAction("Index");
         }
         #endregion
@@ -55,18 +44,12 @@ namespace StudentDemo.Areas.LOC_City.Controllers
         #region Create
         public IActionResult Create(int? CityID)
         {
+            LOC_DAL dal = new LOC_DAL();
             #region ComboBox
-
             string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn1 = new SqlConnection(connstr);
-            conn1.Open();
-            SqlCommand cmd1 = conn1.CreateCommand();
-            cmd1.CommandType = CommandType.StoredProcedure;
-            cmd1.CommandText = "PR_Country_SelectByComboBox";
-            DataTable dt1 = new DataTable();
-            SqlDataReader sdr1 = cmd1.ExecuteReader();
-            dt1.Load(sdr1);
-            conn1.Close();
+            DataTable dt1 = dal.PR_Country_SelectByComboBox(connstr);
+            
+            
             List<LOC_Country_DropDownModel> list = new List<LOC_Country_DropDownModel>();
             foreach (DataRow dr in dt1.Rows)
             {
@@ -85,16 +68,7 @@ namespace StudentDemo.Areas.LOC_City.Controllers
             if (CityID != null)
             {
                 string str = this.Configuration.GetConnectionString("myConnectionStrings");
-                SqlConnection conn = new SqlConnection(str);
-                conn.Open();
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "PR_City_SelectByPK";
-                cmd.Parameters.Add("@CityID", SqlDbType.Int).Value = CityID;
-                DataTable dt = new DataTable();
-                SqlDataReader sdr = cmd.ExecuteReader();
-                dt.Load(sdr);
-                conn.Close();
+                DataTable dt = dal.PR_City_SelectByPK(str, CityID);
                 LOC_CityModel modelLOC_City = new LOC_CityModel();
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -118,26 +92,33 @@ namespace StudentDemo.Areas.LOC_City.Controllers
         public IActionResult Save(LOC_CityModel modelLOC_City)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
+            LOC_DAL dal = new LOC_DAL();
             if (modelLOC_City.CityID == null)
             {
-                cmd.CommandText = "PR_City_Insert";
+                dal.PR_City_Insert
+                (
+                    str,
+                    modelLOC_City.CountryID,
+                    modelLOC_City.StateID,
+                    modelLOC_City.CityName,
+                    modelLOC_City.CityCode
+                 );
 
             }
             else
             {
-                cmd.CommandText = "PR_City_UpdateByPK";
-                cmd.Parameters.Add("@CityID", SqlDbType.Int).Value = modelLOC_City.CityID;
+                dal.PR_City_UpdateByPK
+                (
+                    str,
+                    modelLOC_City.CityID.Value,
+                    modelLOC_City.CountryID,
+                    modelLOC_City.StateID,
+                    modelLOC_City.CityName,
+                    modelLOC_City.CityCode
+                 );
 
             }
-            cmd.Parameters.Add("@CityName", SqlDbType.VarChar).Value = modelLOC_City.CityName;
-            cmd.Parameters.Add("@CityCode", SqlDbType.VarChar).Value = modelLOC_City.CityCode;
-            cmd.Parameters.Add("@CountryID", SqlDbType.VarChar).Value = modelLOC_City.CountryID;
-            cmd.Parameters.Add("@StateID", SqlDbType.VarChar).Value = modelLOC_City.StateID;
-            if (Convert.ToBoolean(cmd.ExecuteNonQuery()))
+
             {
                 if (modelLOC_City.CityID == null)
                 {
@@ -150,10 +131,10 @@ namespace StudentDemo.Areas.LOC_City.Controllers
 
                 }
 
-            }
-            conn.Close();
 
-            return RedirectToAction("Index");
+
+                return RedirectToAction("Index");
+            }
         }
         #endregion
 
@@ -163,19 +144,10 @@ namespace StudentDemo.Areas.LOC_City.Controllers
         {
 
             string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn1 = new SqlConnection(connstr);
-            conn1.Open();
-            SqlCommand cmd1 = conn1.CreateCommand();
-            cmd1.CommandType = CommandType.StoredProcedure;
-            cmd1.CommandText = "PR_State_SelectByComboBox";
-            cmd1.Parameters.AddWithValue("CountryID", CountryID);
-            DataTable dt1 = new DataTable();
-            SqlDataReader sdr1 = cmd1.ExecuteReader();
-            dt1.Load(sdr1);
-            sdr1.Close();
-            conn1.Close();
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt = dal.PR_State_SelectByComboBox(connstr, CountryID);
             List<LOC_State_DropDownModel> list = new  List<LOC_State_DropDownModel>();
-            foreach(DataRow dr in dt1.Rows)
+            foreach(DataRow dr in dt.Rows)
             {
                 LOC_State_DropDownModel vlst = new LOC_State_DropDownModel();
                 vlst.StateID = Convert.ToInt32(dr["StateID"]);

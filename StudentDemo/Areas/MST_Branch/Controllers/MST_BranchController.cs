@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
+
 using System.Data;
-using StudentDemo.Areas.LOC_Country.Models;
+
 using StudentDemo.Areas.MST_Branch.Models;
+using StudentDemo.DAL;
 
 namespace StudentDemo.Areas.MST_Branch.Controllers
 {
@@ -22,14 +23,8 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
         public IActionResult Index()
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_Branch_SelectAll";
-            DataTable dt = new DataTable();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            dt.Load(sdr);
+            MST_DAL dal = new MST_DAL();
+            DataTable dt = dal.PR_Branch_SelectAll(str);
             return View("Index", dt);
         }
         #endregion
@@ -38,14 +33,8 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
         public IActionResult Delete(int BranchID)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_Branch_DeleteByPK";
-            cmd.Parameters.Add("@BranchID", SqlDbType.Int).Value = BranchID;
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            MST_DAL dal = new MST_DAL();
+            dal.PR_Branch_DeleteByPK(str, BranchID);
             return RedirectToAction("Index");
         }
         #endregion
@@ -56,16 +45,8 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
             if (BranchID != null)
             {
                 string str = this.Configuration.GetConnectionString("myConnectionStrings");
-                SqlConnection conn = new SqlConnection(str);
-                conn.Open();
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "PR_Branch_SelectByPK";
-                cmd.Parameters.Add("@BranchID", SqlDbType.Int).Value = BranchID;
-                DataTable dt = new DataTable();
-                SqlDataReader sdr = cmd.ExecuteReader();
-                dt.Load(sdr);
-                conn.Close();
+                MST_DAL dal = new MST_DAL();
+                DataTable dt = dal.PR_Branch_SelectByPK(str, BranchID);
                 MST_BranchModel modelMST_Branch = new MST_BranchModel();
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -95,38 +76,33 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
         public IActionResult Save(MST_BranchModel modelMST_Branch)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
+            MST_DAL dal = new MST_DAL();
+           
             if (modelMST_Branch.BranchID == null)
             {
-                cmd.CommandText = "PR_Branch_Insert";
+                dal.PR_Branch_Insert(str,modelMST_Branch.BranchName,modelMST_Branch.BranchCode);
 
             }
             else
             {
-                cmd.CommandText = "PR_Branch_UpdateByPK";
-                cmd.Parameters.Add("@BranchID", SqlDbType.Int).Value = modelMST_Branch.BranchID;
+                dal.PR_Country_UpdateByPK(str, modelMST_Branch.BranchID.Value, modelMST_Branch.BranchName, modelMST_Branch.BranchCode);
 
             }
-            cmd.Parameters.Add("@BranchName", SqlDbType.VarChar).Value = modelMST_Branch.BranchName;
-            cmd.Parameters.Add("@BranchCode", SqlDbType.VarChar).Value = modelMST_Branch.BranchCode;
-            if (Convert.ToBoolean(cmd.ExecuteNonQuery()))
-            {
+            
+
                 if (modelMST_Branch.BranchID == null)
                 {
-                    TempData["Success"] = ("Country Added Successfully");
+                    TempData["Success"] = ("Branch Added Successfully");
 
                 }
                 else
                 {
-                    TempData["Success"] = ("Country Updated Successfully");
+                    TempData["Success"] = ("Branch Updated Successfully");
 
                 }
 
-            }
-            conn.Close();
+            
+            
 
             return RedirectToAction("Index");
         }

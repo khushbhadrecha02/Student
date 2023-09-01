@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentDemo.Areas.LOC_Country.Models;
+using StudentDemo.DAL;
 using System.Data;
-using System.Data.SqlClient;
+
 
 namespace StudentDemo.Areas.LOC_Country.Controllers
 {
@@ -21,30 +22,26 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
         public IActionResult Index()
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_Country_SelectAll";
-            DataTable dt = new DataTable();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            dt.Load(sdr);
-            return View("Index", dt);
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt = dal.PR_Country_SelectAll(str);
+
+            var viewModel = new LOC_Country_ViewModel
+            {
+                CountryDataTable = dt,
+                SearchModel = new LOC_Country_SearchModel() // You can initialize properties if needed
+            };
+
+            return View("Index",viewModel);
         }
+
         #endregion
 
         #region Delete
         public IActionResult Delete(int CountryID)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType=CommandType.StoredProcedure;
-            cmd.CommandText = "PR_Country_DeleteByPK";
-            cmd.Parameters.Add("@CountryID",SqlDbType.Int).Value = CountryID;
-                cmd.ExecuteNonQuery();
-            conn.Close();
+            LOC_DAL dal = new LOC_DAL();
+            dal.PR_Country_DeleteByPK(str,CountryID);
             return RedirectToAction("Index");
         }
         #endregion
@@ -55,16 +52,8 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
             if(CountryID != null)
             {
                 string str = this.Configuration.GetConnectionString("myConnectionStrings");
-                SqlConnection conn = new SqlConnection(str);
-                conn.Open();
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "PR_Country_SelectByPK";
-                cmd.Parameters.Add("@CountryID", SqlDbType.Int).Value = CountryID;
-                DataTable dt = new DataTable();
-                SqlDataReader sdr = cmd.ExecuteReader();
-                dt.Load(sdr);
-                conn.Close();
+                LOC_DAL dal = new LOC_DAL();
+                DataTable dt= dal.PR_Country_SelectByPK(str,CountryID);
                 LOC_CountryModel modelLOC_Country = new LOC_CountryModel();
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -92,41 +81,56 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
         public IActionResult Save(LOC_CountryModel modelLOC_Country)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
+
+            LOC_DAL dal = new LOC_DAL();
+            
             if (modelLOC_Country.CountryID == null)
             {
-                cmd.CommandText = "PR_Country_Insert";
+                dal.PR_Country_Insert(str,modelLOC_Country.CountryName,modelLOC_Country.CountryCode);
 
             }
             else
             {
-                cmd.CommandText = "PR_Country_UpdateByPK";
-                cmd.Parameters.Add("@CountryID",SqlDbType.Int).Value=modelLOC_Country.CountryID;
+                dal.PR_Country_UpdateByPK(str, modelLOC_Country.CountryID.Value,modelLOC_Country.CountryName,modelLOC_Country.CountryCode);
 
             }
-            cmd.Parameters.Add("@CountryName", SqlDbType.VarChar).Value = modelLOC_Country.CountryName;
-            cmd.Parameters.Add("@CountryCode", SqlDbType.VarChar).Value = modelLOC_Country.CountryCode;
-            if (Convert.ToBoolean(cmd.ExecuteNonQuery()))
-            {
-                if (modelLOC_Country.CountryID == null)
+
+            if (modelLOC_Country.CountryID == null)
                 {
                     TempData["Success"] = ("Country Added Successfully");
 
                 }
-                else
+            else
                 {
                     TempData["Success"] = ("Country Updated Successfully");
 
                 }
 
-            }
-            conn.Close();
+            
+            
             
             return RedirectToAction("Index");
         }
+        #endregion
+
+        #region Search
+        [HttpPost]
+        public IActionResult Search(LOC_Country_SearchModel searchModel)
+        {
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt = dal.PR_Country_SelectByPage(str,searchModel.CountryName,searchModel.CountryCode);
+
+            var viewModel = new LOC_Country_ViewModel
+            {
+                CountryDataTable = dt,
+                SearchModel = searchModel
+            };
+
+            return View("Index", viewModel);
+        }
+
+
         #endregion
 
     }

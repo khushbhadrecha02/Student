@@ -4,6 +4,7 @@ using System.Data;
 
 using StudentDemo.Areas.LOC_State.Models;
 using StudentDemo.Areas.LOC_Country.Models;
+using StudentDemo.DAL;
 
 namespace StudentDemo.Areas.LOC_State.Controllers
 {
@@ -23,14 +24,8 @@ namespace StudentDemo.Areas.LOC_State.Controllers
         public IActionResult Index()
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_State_SelectAll";
-            DataTable dt = new DataTable();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            dt.Load(sdr);
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt = dal.PR_State_SelectAll(str);
             return View("Index", dt);
         }
         #endregion
@@ -39,14 +34,8 @@ namespace StudentDemo.Areas.LOC_State.Controllers
         public IActionResult Delete(int StateID)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_State_DeleteByPK";
-            cmd.Parameters.Add("@StateID", SqlDbType.Int).Value = StateID;
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            LOC_DAL dal = new LOC_DAL();
+            dal.PR_State_DeleteByPK(str,StateID);
             return RedirectToAction("Index");
         }
         #endregion
@@ -56,15 +45,8 @@ namespace StudentDemo.Areas.LOC_State.Controllers
         {
             #region ComboBox
             string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn1 = new SqlConnection(connstr);
-            conn1.Open();
-            SqlCommand cmd1 = conn1.CreateCommand();
-            cmd1.CommandType = CommandType.StoredProcedure;
-            cmd1.CommandText = "PR_Country_SelectByComboBox";
-            DataTable dt1 = new DataTable();
-            SqlDataReader sdr1 = cmd1.ExecuteReader();
-            dt1.Load(sdr1);
-            conn1.Close();
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt1 = dal.PR_Country_SelectByComboBox(connstr);
             List<LOC_Country_DropDownModel> list = new List<LOC_Country_DropDownModel>();
             foreach(DataRow dr in dt1.Rows)
             {
@@ -82,16 +64,9 @@ namespace StudentDemo.Areas.LOC_State.Controllers
             if (StateID != null)
             {
                 string str = this.Configuration.GetConnectionString("myConnectionStrings");
-                SqlConnection conn = new SqlConnection(str);
-                conn.Open();
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "PR_State_SelectByPK";
-                cmd.Parameters.Add("@StateID", SqlDbType.Int).Value = StateID;
-                DataTable dt = new DataTable();
-                SqlDataReader sdr = cmd.ExecuteReader();
-                dt.Load(sdr);
-                conn.Close();
+
+               DataTable dt = dal.PR_State_SelectByPK(str,StateID);
+                
                 LOC_StateModel modelLOC_State = new LOC_StateModel();
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -113,26 +88,20 @@ namespace StudentDemo.Areas.LOC_State.Controllers
         public IActionResult Save(LOC_StateModel modelLOC_State)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
+            LOC_DAL dal = new LOC_DAL();
+
             if (modelLOC_State.StateID == null)
             {
-                cmd.CommandText = "PR_State_Insert";
+                dal.PR_State_Insert(str,modelLOC_State.CountryID,modelLOC_State.StateName,modelLOC_State.StateCode);
 
             }
             else
             {
-                cmd.CommandText = "PR_State_UpdateByPK";
-                cmd.Parameters.Add("@StateID", SqlDbType.Int).Value = modelLOC_State.StateID;
+                dal.PR_State_UpdateByPK(str,modelLOC_State.StateID.Value,modelLOC_State.CountryID, modelLOC_State.StateName, modelLOC_State.StateCode);
 
             }
-            cmd.Parameters.Add("@StateName", SqlDbType.VarChar).Value = modelLOC_State.StateName;
-            cmd.Parameters.Add("@StateCode", SqlDbType.VarChar).Value = modelLOC_State.StateCode;
-            cmd.Parameters.Add("@CountryID", SqlDbType.Int).Value = modelLOC_State.CountryID;
-            if (Convert.ToBoolean(cmd.ExecuteNonQuery()))
-            {
+            
+            
                 if (modelLOC_State.StateID == null)
                 {
                     TempData["Success"] = ("State Added Successfully");
@@ -144,8 +113,8 @@ namespace StudentDemo.Areas.LOC_State.Controllers
 
                 }
 
-            }
-            conn.Close();
+            
+
 
             return RedirectToAction("Index");
         }
