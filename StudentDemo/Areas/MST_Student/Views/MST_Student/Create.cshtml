@@ -3,14 +3,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @model MST_StudentModel
-<div class="card shadow border-0 mt-4">
-    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h2 class=" text-white py-2">Add Student</h2>
-            </div>
-        </div>
-    </div>
+<section class="section" style="margin-top: 100px;">
+    <!-- Add margin-top here -->
+
+
+    <div class="row">
+        <div class="col-lg-9 mx-auto">
+            <div class="card shadow border-0 mt-4">
+                <div class="card-header ml-0 py-3">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 class="text-black py-2">Add/Edit State</h2>
+                        </div>
+                    </div>
+                </div>
     <div class="card-body p-4">
         <form method="post" asp-controller="MST_Student" asp-action="Save" class="row" enctype="multipart/form-data">
             <div class="border p-3 ">
@@ -110,8 +116,10 @@
         </form>
 
     </div>
-
+    </div>
 </div>
+</div>
+</section>
 @section Scripts{
     @{
         <partial name="_ValidationScriptsPartial" />

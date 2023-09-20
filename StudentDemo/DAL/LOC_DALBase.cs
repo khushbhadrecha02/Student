@@ -351,7 +351,7 @@ namespace StudentDemo.DAL
         #endregion
 
         #region PR_City_Insert
-        public void PR_City_Insert(string conn, int CountryID,int StateID, string CityName, string CityCode)
+        public void PR_City_Insert(string conn, int? cityID, int CountryID,int StateID, string CityName, string CityCode)
         {
             try
             {

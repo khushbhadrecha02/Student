@@ -98,8 +98,9 @@ namespace StudentDemo.Areas.LOC_City.Controllers
                 dal.PR_City_Insert
                 (
                     str,
-                    modelLOC_City.CountryID,
+                    modelLOC_City.CityID,
                     modelLOC_City.StateID,
+                    modelLOC_City.CountryID,
                     modelLOC_City.CityName,
                     modelLOC_City.CityCode
                  );
@@ -111,8 +112,8 @@ namespace StudentDemo.Areas.LOC_City.Controllers
                 (
                     str,
                     modelLOC_City.CityID.Value,
-                    modelLOC_City.CountryID,
                     modelLOC_City.StateID,
+                    modelLOC_City.CountryID,
                     modelLOC_City.CityName,
                     modelLOC_City.CityCode
                  );
