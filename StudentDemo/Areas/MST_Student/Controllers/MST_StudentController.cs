@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
 using System.Data;
 using StudentDemo.Areas.LOC_City.Models;
 using StudentDemo.Areas.MST_Branch.Models;
@@ -23,10 +22,46 @@ namespace StudentDemo.Areas.MST_Student.Controllers
         #region Index
         public IActionResult Index()
         {
+            #region ComboBox
+
+            string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
+            MST_DAL dal = new MST_DAL();
+
+            DataTable dt1 = dal.PR_Branch_SelectByComboBox(connstr);
+            DataTable dt2 = dal.PR_City_SelectByComboBox(connstr);
+
+
+            List<MST_Branch_DropDownModel> list = new List<MST_Branch_DropDownModel>();
+            List<LOC_City_DropDownModel> list1 = new List<LOC_City_DropDownModel>();
+
+            foreach (DataRow dr in dt1.Rows)
+            {
+                MST_Branch_DropDownModel vlst = new MST_Branch_DropDownModel();
+                vlst.BranchID = Convert.ToInt32(dr["BranchID"]);
+                vlst.BranchName = Convert.ToString(dr["BranchName"]);
+                list.Add(vlst);
+            }
+
+            foreach (DataRow dr in dt2.Rows)
+            {
+                LOC_City_DropDownModel vlst1 = new LOC_City_DropDownModel();
+                vlst1.CityID = Convert.ToInt32(dr["CityID"]);
+                vlst1.CityName = Convert.ToString(dr["CityName"]);
+                list1.Add(vlst1);
+            }
+
+            ViewBag.BranchList = list;
+            ViewBag.CityList = list1;
+            #endregion
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            MST_DAL dal =new MST_DAL();
             DataTable dt = dal.PR_Student_SelectAll(str);
-            return View("Index", dt);
+            var viewModel = new MST_Student_ViewModel
+            {
+                StudentDataTable = dt,
+                SearchModel = new MST_Student_SearchModel()
+            };
+            
+            return View("Index", viewModel);
         }
         #endregion
 
@@ -34,14 +69,9 @@ namespace StudentDemo.Areas.MST_Student.Controllers
         public IActionResult Delete(int StudentID)
         {
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
-            SqlConnection conn = new SqlConnection(str);
-            conn.Open();
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "PR_Student_DeleteByPK";
-            cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = StudentID;
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            MST_DAL dal = new MST_DAL();
+            dal.PR_Student_DeleteByPK(str, StudentID);
+            TempData["Success"] = ("Student Deleted Successfully");
             return RedirectToAction("Index");
         }
         #endregion
@@ -205,6 +235,52 @@ namespace StudentDemo.Areas.MST_Student.Controllers
 
             return RedirectToAction("Index");
         }
+        #endregion
+
+        #region Search
+        [HttpPost]
+        public IActionResult Search(MST_Student_SearchModel searchModel)
+        {
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            MST_DAL dal = new MST_DAL();
+            DataTable dt = dal.PR_Student_SelectByPage(str, searchModel.BranchID, searchModel.CityID, searchModel.StudentName,searchModel.Gender,searchModel.IsActive,searchModel.Age);
+            string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
+            DataTable dt1 = dal.PR_Branch_SelectByComboBox(connstr);
+            DataTable dt2 = dal.PR_City_SelectByComboBox(connstr);
+
+
+            List<MST_Branch_DropDownModel> list = new List<MST_Branch_DropDownModel>();
+            List<LOC_City_DropDownModel> list1 = new List<LOC_City_DropDownModel>();
+
+            foreach (DataRow dr in dt1.Rows)
+            {
+                MST_Branch_DropDownModel vlst = new MST_Branch_DropDownModel();
+                vlst.BranchID = Convert.ToInt32(dr["BranchID"]);
+                vlst.BranchName = Convert.ToString(dr["BranchName"]);
+                list.Add(vlst);
+            }
+
+            foreach (DataRow dr in dt2.Rows)
+            {
+                LOC_City_DropDownModel vlst1 = new LOC_City_DropDownModel();
+                vlst1.CityID = Convert.ToInt32(dr["CityID"]);
+                vlst1.CityName = Convert.ToString(dr["CityName"]);
+                list1.Add(vlst1);
+            }
+
+            ViewBag.BranchList = list;
+            ViewBag.CityList = list1;
+            
+            var viewModel = new MST_Student_ViewModel
+            {
+                StudentDataTable = dt,
+                SearchModel = searchModel,
+            };
+
+            return View("Index", viewModel);
+        }
+
+
         #endregion
     }
 }

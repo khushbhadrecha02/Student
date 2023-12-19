@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\SEC_User\Data\" />
+    <Folder Include="Areas\Login\Data\" />
   </ItemGroup>
 
 </Project>

@@ -277,5 +277,104 @@ namespace StudentDemo.DAL
             }
         }
         #endregion
+
+
+        #region dbo.PR_Branch_SelectByPage
+        public DataTable PR_Branch_SelectByPage(string conn, string? BranchName, string? BranchCode)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_Branch_SelectByPage");
+                db.AddInParameter(dbCMD, "BranchName", SqlDbType.VarChar, BranchName);
+                db.AddInParameter(dbCMD, "BranchCode", SqlDbType.VarChar, BranchCode);
+
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
+        #region dbo.PR_Student_SelectByPage
+        public DataTable PR_Student_SelectByPage(string conn, int? BranchID, int? CityID,string? StudentName,string? Gender,string? IsActive,int? Age)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_Student_SelectByPage");
+                db.AddInParameter(dbCMD, "BranchID", SqlDbType.Int, BranchID);
+                db.AddInParameter(dbCMD, "CityID", SqlDbType.Int, CityID);
+                db.AddInParameter(dbCMD, "StudentName", SqlDbType.VarChar, StudentName);
+                db.AddInParameter(dbCMD, "Gender", SqlDbType.VarChar, Gender);
+                db.AddInParameter(dbCMD, "IsActive", SqlDbType.VarChar, IsActive);
+                db.AddInParameter(dbCMD, "Age", SqlDbType.Int, Age);
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
+        #region PR_Login_SelectByEmailAndPassword
+        public DataTable PR_Login_SelectByEmailAndpassword(string conn, string? Email,string? Password)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_Login_SelectByEmailAndPassword");
+                db.AddInParameter(dbCMD, "Email", SqlDbType.VarChar, Email);
+                db.AddInParameter(dbCMD, "Password", SqlDbType.VarChar, Password);
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
+        #region PR_Branch_Insert
+        public void PR_Login_Insert(string conn, string UserName, string Email,string Role,string PhotoPath,string Password)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_Login_Insert");
+                db.AddInParameter(dbCMD, "UserName", SqlDbType.VarChar, UserName);
+                db.AddInParameter(dbCMD, "Email", SqlDbType.VarChar, Email);
+                db.AddInParameter(dbCMD, "Role", SqlDbType.VarChar, Role);
+                db.AddInParameter(dbCMD, "PhotoPath", SqlDbType.VarChar, PhotoPath);
+                db.AddInParameter(dbCMD, "Password", SqlDbType.VarChar, Password);
+                db.ExecuteNonQuery(dbCMD);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        #endregion
     }
 }

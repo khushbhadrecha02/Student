@@ -21,13 +21,91 @@ namespace StudentDemo.Areas.LOC_City.Controllers
         #endregion
 
         #region Index
-        public IActionResult Index()
+        public IActionResult Index(int? CountryID)
         {
-           
-            string str = this.Configuration.GetConnectionString("myConnectionStrings");
             LOC_DAL dal = new LOC_DAL();
-            DataTable dt = dal.PR_City_SelectAll(str);
-            return View("Index", dt);
+            #region ComboBox
+            string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
+            DataTable dt1 = dal.PR_Country_SelectByComboBox(connstr);
+
+
+            List<LOC_Country_DropDownModel> list = new List<LOC_Country_DropDownModel>();
+            foreach (DataRow dr in dt1.Rows)
+            {
+                LOC_Country_DropDownModel vlst = new LOC_Country_DropDownModel();
+                vlst.CountryID = Convert.ToInt32(dr["CountryID"]);
+                vlst.CountryName = Convert.ToString(dr["CountryName"]);
+                list.Add(vlst);
+            }
+            ViewBag.CountryList = list;
+            List<LOC_State_DropDownModel> list1 = new List<LOC_State_DropDownModel>();
+            ViewBag.StateList = list1;
+
+            #endregion
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            DataTable dt;
+            LOC_City_SearchModel searchModel = new LOC_City_SearchModel();
+            searchModel.CountryID = CountryID;
+
+            if (CountryID != null)
+            {
+                dt = dal.PR_City_SelectByPage(str, searchModel.CountryID,null,null,null);
+
+            }
+            else
+            {
+                dt = dal.PR_City_SelectAll(str);
+            }
+            var viewModel = new LOC_City_ViewModel
+            {
+                CityDataTable = dt,
+                SearchModel = new LOC_City_SearchModel()
+            };
+            return View("Index", viewModel);
+        }
+        #endregion
+        #region Index1
+        public IActionResult Index1(int? StateID)
+        {
+            LOC_DAL dal = new LOC_DAL();
+            #region ComboBox
+            string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
+            DataTable dt1 = dal.PR_Country_SelectByComboBox(connstr);
+
+
+            List<LOC_Country_DropDownModel> list = new List<LOC_Country_DropDownModel>();
+            foreach (DataRow dr in dt1.Rows)
+            {
+                LOC_Country_DropDownModel vlst = new LOC_Country_DropDownModel();
+                vlst.CountryID = Convert.ToInt32(dr["CountryID"]);
+                vlst.CountryName = Convert.ToString(dr["CountryName"]);
+                list.Add(vlst);
+            }
+            ViewBag.CountryList = list;
+            List<LOC_State_DropDownModel> list1 = new List<LOC_State_DropDownModel>();
+            ViewBag.StateList = list1;
+
+            #endregion
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            DataTable dt;
+            LOC_City_SearchModel searchModel = new LOC_City_SearchModel();
+            searchModel.StateID = StateID;
+            if (StateID != null)
+
+            {
+                dt = dal.PR_City_SelectByPage(str, null, searchModel.StateID, null, null);
+
+            }
+            else
+            {
+                dt = dal.PR_City_SelectAll(str);
+            }
+            var viewModel = new LOC_City_ViewModel
+            {
+                CityDataTable = dt,
+                SearchModel = new LOC_City_SearchModel()
+            };
+            return View("Index", viewModel);
         }
         #endregion
 
@@ -37,6 +115,7 @@ namespace StudentDemo.Areas.LOC_City.Controllers
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             LOC_DAL dAL = new LOC_DAL();
             dAL.PR_City_DeleteByPK(str, CityID);
+            TempData["Success"] = ("City Deleted Successfully");
             return RedirectToAction("Index");
         }
         #endregion
@@ -98,9 +177,8 @@ namespace StudentDemo.Areas.LOC_City.Controllers
                 dal.PR_City_Insert
                 (
                     str,
-                    modelLOC_City.CityID,
-                    modelLOC_City.StateID,
                     modelLOC_City.CountryID,
+                    modelLOC_City.StateID,
                     modelLOC_City.CityName,
                     modelLOC_City.CityCode
                  );
@@ -159,6 +237,41 @@ namespace StudentDemo.Areas.LOC_City.Controllers
             return Json(vModel);
 
         }
+        #endregion
+        #region Search
+        [HttpPost]
+        public IActionResult Search(LOC_City_SearchModel searchModel)
+        {
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt = dal.PR_City_SelectByPage(str, searchModel.CountryID, searchModel.StateID,searchModel.CityName, searchModel.CityCode);
+            string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
+            
+            DataTable dt1 = dal.PR_Country_SelectByComboBox(connstr);
+
+
+            List<LOC_Country_DropDownModel> list = new List<LOC_Country_DropDownModel>();
+            foreach (DataRow dr in dt1.Rows)
+            {
+                LOC_Country_DropDownModel vlst = new LOC_Country_DropDownModel();
+                vlst.CountryID = Convert.ToInt32(dr["CountryID"]);
+                vlst.CountryName = Convert.ToString(dr["CountryName"]);
+                list.Add(vlst);
+            }
+            ViewBag.CountryList = list;
+            List<LOC_State_DropDownModel> list1 = new List<LOC_State_DropDownModel>();
+            ViewBag.StateList = list1;
+
+            var viewModel = new LOC_City_ViewModel
+            {
+                CityDataTable = dt,
+                SearchModel = searchModel,
+            };
+
+            return View("Index", viewModel);
+        }
+
+
         #endregion
     }
 }

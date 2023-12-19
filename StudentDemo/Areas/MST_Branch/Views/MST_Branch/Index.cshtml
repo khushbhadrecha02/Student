@@ -1,10 +1,27 @@
-﻿@using System.Data
-@model DataTable
+﻿@using  System.Data
+@using StudentDemo.Areas.MST_Branch.Models;
+@model MST_Branch_ViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h3>@TempData["Success"]</h3>
-<div class="card shadow border-0 mt-4">
+@*<div class="row" >
+    <form asp-controller="MST_Branch" asp-action="Search" class="row g-3">
+        <div class="col-3">
+            <input type="text" asp-for="@Model.SearchModel.BranchName" class="form-control" placeholder="Branch Name">
+        </div>
+
+        <div class="col-3">
+            <input type="text" asp-for="@Model.SearchModel.BranchCode" class="form-control" placeholder="Branch Code">
+        </div>
+        <div class="col-3">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-area="MST_Branch" asp-controller="MST_Branch" asp-action="Index" class="btn btn-danger">
+                Clear
+            </a>
+        </div>
+    </form>
+</div>*@
+<div class="card shadow border-0 mt-4" style="overflow:auto">
     <div class="card-header  ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
@@ -13,15 +30,25 @@
         </div>
     </div>
     <div class="card-body p-4">
-        <div class="row pb-3">
-            <div class="col-3">
-                <div class="input-group">
-                    <input id="Sample_1" type="search" placeholder="Search Branch" class="form-control" />
-                    
+        <div class="row">
+            <form asp-controller="MST_Branch" asp-action="Search" class="row g-3">
+                <div class="col-3">
+                    <input type="text" asp-for="@Model.SearchModel.BranchName" class="form-control" placeholder="Branch Name">
                 </div>
 
-            </div>
-            <div class="col-9 text-end">
+                <div class="col-3">
+                    <input type="text" asp-for="@Model.SearchModel.BranchCode" class="form-control" placeholder="Branch Code">
+                </div>
+                <div class="col-3">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a asp-area="MST_Branch" asp-controller="MST_Branch" asp-action="Index" class="btn btn-danger">
+                        Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+        <div class="row pb-3">
+            <div class="col-12 text-end">
                 <a asp-controller="MST_Branch" asp-action="Create" class="btn btn-primary">
                     <i class="bi bi-plus-circle"></i> Add Branch
                 </a>
@@ -52,23 +79,23 @@
 
 
         <tbody id="Sample_2">
-                @foreach (DataRow dr in Model.Rows)
+                @foreach (DataRow dr in Model.BranchDataTable.Rows)
                 {
                 <tr>
                     <td>@dr["BranchName"]</td>
                     <td>@dr["BranchCode"]</td>
                     <td>@Convert.ToDateTime(dr["Created"]).ToString("dd-MM-yy")</td>
                     <td>@Convert.ToDateTime(dr["Modified"]).ToString("dd-MM-yy")</td>
-
+                        
                     <td>
                         <div class="w-75 btn-group" role="group">
 
                             <a asp-area="MST_Branch" asp-controller="MST_Branch" asp-action="Delete" asp-route-BranchID="@dr["BranchID"]" class="btn btn-danger mx-2" onclick="fun1()">
-                                <i class="bi bi-trash-fill"></i> Delete
+                                <i class="bi bi-trash-fill"></i> 
                             </a>
 
                             <a asp-area="MST_Branch" asp-controller="MST_Branch" asp-action="Create" asp-route-BranchID="@dr["BranchID"]" class="btn btn-primary mx-2">
-                                <i class="bi bi-pencil-square"></i> Edit
+                                <i class="bi bi-pencil-square"></i> 
                             </a>
 
 

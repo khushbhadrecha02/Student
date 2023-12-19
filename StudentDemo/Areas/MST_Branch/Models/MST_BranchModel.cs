@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 namespace StudentDemo.Areas.MST_Branch.Models
 {
@@ -19,5 +20,16 @@ namespace StudentDemo.Areas.MST_Branch.Models
     {
         public int BranchID { get; set; }
         public string BranchName { get; set; }
+    }
+    public class MST_Branch_SearchModel
+    {
+
+        public string? BranchName { get; set; }
+        public string? BranchCode { get; set; }
+    }
+    public class MST_Branch_ViewModel
+    {
+        public DataTable BranchDataTable { get; set; }
+        public MST_Branch_SearchModel SearchModel { get; set; }
     }
 }

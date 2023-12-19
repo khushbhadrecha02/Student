@@ -337,7 +337,6 @@ namespace StudentDemo.DAL
                 db.AddInParameter(dbCMD, "CityID", SqlDbType.Int, CityID);
                 db.AddInParameter(dbCMD, "CountryID", SqlDbType.Int, CountryID);
                 db.AddInParameter(dbCMD, "StateID", SqlDbType.Int, StateID);
-                db.AddInParameter(dbCMD, "CountryID", SqlDbType.Int, CountryID);
                 db.AddInParameter(dbCMD, "CityName", SqlDbType.VarChar, CityName);
                 db.AddInParameter(dbCMD, "CityCode", SqlDbType.VarChar, CityCode);
                 db.ExecuteNonQuery(dbCMD);
@@ -351,7 +350,7 @@ namespace StudentDemo.DAL
         #endregion
 
         #region PR_City_Insert
-        public void PR_City_Insert(string conn, int? cityID, int CountryID,int StateID, string CityName, string CityCode)
+        public void PR_City_Insert(string conn, int CountryID,int StateID, string CityName, string CityCode)
         {
             try
             {
@@ -397,7 +396,126 @@ namespace StudentDemo.DAL
             }
         }
         #endregion
+        #region dbo.PR_Country_SelectByPage
+        public DataTable PR_State_SelectByPage(string conn,int? CountryID, string? StateName, string? StateCode)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_State_SelectByPage");
+                db.AddInParameter(dbCMD, "CountryID", SqlDbType.Int, CountryID);
+                db.AddInParameter(dbCMD, "StateName", SqlDbType.VarChar, StateName);
+                db.AddInParameter(dbCMD, "StateCode", SqlDbType.VarChar, StateCode);
 
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
+
+        #region dbo.PR_City_SelectByPage
+        public DataTable PR_City_SelectByPage(string conn, int? CountryID,int? StateID, string? CityName, string? CityCode)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_City_SelectByPage");
+                db.AddInParameter(dbCMD, "CountryID", SqlDbType.Int, CountryID);
+                db.AddInParameter(dbCMD, "StateID", SqlDbType.Int, StateID);
+                db.AddInParameter(dbCMD, "CityName", SqlDbType.VarChar, CityName);
+                db.AddInParameter(dbCMD, "CityCode", SqlDbType.VarChar, CityCode);
+
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
+        #region PR_State_SelectByCountryID
+        public DataTable PR_State_SelectByCountryID(string conn, int? CountryID)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_State_SelectByCountryID");
+                db.AddInParameter(dbCMD, "CountryID", SqlDbType.Int, CountryID);
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
+        #region PR_City_SelectByCountryID
+        public DataTable PR_City_SelectByCountryID(string conn, int? CountryID)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_City_SelectByCountryID");
+                db.AddInParameter(dbCMD, "CountryID", SqlDbType.Int, CountryID);
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
+        #region PR_City_SelectByStateID
+        public DataTable PR_City_SelectByStateID(string conn, int? StateID)
+        {
+            try
+            {
+                SqlDatabase db = new SqlDatabase(conn);
+                DbCommand dbCMD = db.GetStoredProcCommand("PR_City_SelectByStateID");
+                db.AddInParameter(dbCMD, "StateID", SqlDbType.Int, StateID);
+                DataTable dt = new DataTable();
+                dt.Columns.Add();
+                using (IDataReader dr = db.ExecuteReader(dbCMD))
+                {
+                    dt.Load(dr);
+                }
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
 
 
 

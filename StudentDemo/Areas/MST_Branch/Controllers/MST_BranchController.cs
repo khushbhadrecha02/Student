@@ -5,6 +5,7 @@ using System.Data;
 using StudentDemo.Areas.MST_Branch.Models;
 using StudentDemo.DAL;
 
+
 namespace StudentDemo.Areas.MST_Branch.Controllers
 {
     [Area("MST_Branch")]
@@ -25,7 +26,12 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             MST_DAL dal = new MST_DAL();
             DataTable dt = dal.PR_Branch_SelectAll(str);
-            return View("Index", dt);
+            var viewModel = new MST_Branch_ViewModel
+            {
+                BranchDataTable = dt,
+                SearchModel = new MST_Branch_SearchModel() // You can initialize properties if needed
+            };
+            return View("Index", viewModel);
         }
         #endregion
 
@@ -35,6 +41,7 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             MST_DAL dal = new MST_DAL();
             dal.PR_Branch_DeleteByPK(str, BranchID);
+            TempData["Success"] = ("Branch Deleted Successfully");
             return RedirectToAction("Index");
         }
         #endregion
@@ -106,6 +113,26 @@ namespace StudentDemo.Areas.MST_Branch.Controllers
 
             return RedirectToAction("Index");
         }
+        #endregion
+
+        #region Search
+        [HttpPost]
+        public IActionResult Search(MST_Branch_SearchModel searchModel)
+        {
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            MST_DAL dal = new MST_DAL();
+            DataTable dt = dal.PR_Branch_SelectByPage(str, searchModel.BranchName, searchModel.BranchCode);
+
+            var viewModel = new MST_Branch_ViewModel
+            {
+                BranchDataTable = dt,
+                SearchModel = searchModel
+            };
+
+            return View("Index", viewModel);
+        }
+
+
         #endregion
     }
 }

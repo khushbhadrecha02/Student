@@ -1,10 +1,45 @@
 ﻿@using System.Data
-@model DataTable
+@using StudentDemo.Areas.MST_Student.Models;
+@model MST_Student_ViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+   
 }
-<h3>@TempData["Success"]</h3>
-<div class="card shadow border-0 mt-4">
+<div class="row">
+    <form asp-controller="MST_Student" asp-action="Search" class="row g-3">
+        <div class="col-3">
+            <select class="form-control border-1"  asp-for="@Model.SearchModel.BranchID" asp-items="@(new SelectList(ViewBag.BranchList,"BranchID","BranchName"))">
+
+                <option value="">Select Branch</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <select class="form-control border-1" id="StateID" asp-for="@Model.SearchModel.CityID" asp-items="@(new SelectList(ViewBag.CityList,"CityID","CityName"))">
+                <option value="">Select City</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <input type="text" asp-for="@Model.SearchModel.StudentName" class="form-control" placeholder="Student Name">
+        </div>
+
+        <div class="col-3">
+            <input type="text" asp-for="@Model.SearchModel.Gender" class="form-control" placeholder="Gender">
+        </div>
+        <div class="col-3">
+            <input type="text" asp-for="@Model.SearchModel.IsActive" class="form-control" placeholder="ISActive">
+        </div>
+        <div class="col-3">
+            <input type="text" asp-for="@Model.SearchModel.Age" class="form-control" placeholder="Age">
+        </div>
+        <div class="col-3">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-area="MST_Student" asp-controller="MST_Student" asp-action="Index" class="btn btn-danger">
+                Clear
+            </a>
+        </div>
+    </form>
+</div>
+<div class="card shadow border-0 mt-4" style="overflow: auto">
     <div class="card-header  ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
@@ -28,6 +63,9 @@
             </div>
         </div>
     </div>
+    <!-- Assuming modelMST_Student is passed to the view -->
+    
+
     <table class="table table-hover">
         <tr>
         <thead>
@@ -45,7 +83,7 @@
         <th>Age</th>
         <th>ISActive</th>
         <th>Gender</th>
-        <th>Password</th>
+        @* <th>Image</th> *@
         <th>Created</th>
         <th>Modified</th>
         <th></th>
@@ -53,7 +91,7 @@
 
 
         <tbody id="Sample_2">
-                @foreach (DataRow dr in Model.Rows)
+                @foreach (DataRow dr in Model.StudentDataTable.Rows)
                 {
                 <tr>
                     
@@ -70,19 +108,20 @@
                     <td>@dr["Age"]</td>
                     <td>@dr["ISActive"]</td>
                     <td>@dr["Gender"]</td>
-                    <td>@dr["Password"]</td>
+                    @* <td><img src="@Url.Content(Convert.ToString(dr["PhotoPath"]))" class="my-3" alt="Profile" height="250"  width="250"></td> *@
                     <td>@Convert.ToDateTime(dr["Created"]).ToString("dd-MM-yy")</td>
                     <td>@Convert.ToDateTime(dr["Modified"]).ToString("dd-MM-yy")</td>
-                    <td><img src="@dr["PhotoPath"].ToString()"></td>
+                    
+                    
                     <td>
                         <div class="w-75 btn-group" role="group">
 
                             <a asp-area="MST_Student" asp-controller="MST_Student" asp-action="Delete" asp-route-StudentID="@dr["StudentID"]" class="btn btn-danger mx-2" onclick="fun1()">
-                                <i class="bi bi-trash-fill"></i> Delete
+                                <i class="bi bi-trash-fill"></i> 
                             </a>
 
                             <a asp-area="MST_Student" asp-controller="MST_Student" asp-action="Create" asp-route-StudentID="@dr["StudentID"]" class="btn btn-primary mx-2">
-                                <i class="bi bi-pencil-square"></i> Edit
+                                <i class="bi bi-pencil-square"></i> 
                             </a>
 
                         </div>

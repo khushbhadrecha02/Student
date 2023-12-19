@@ -6,8 +6,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h3>@TempData["Success"]</h3>
-<div class="row" style="margin-top: 50px;">
+<div class="row" >
     <form asp-controller="LOC_Country" asp-action="Search" class="row g-3">
         <div class="col-3">
             <input type="text" asp-for="@Model.SearchModel.CountryName" class="form-control" placeholder="Country">
@@ -67,6 +66,12 @@
             Modified
         </th>
         <th>
+            StateCount
+        </th>
+        <th>
+            CityCount
+        </th>
+        <th>
 
         </th>
             </thead>
@@ -81,16 +86,26 @@
                 <td>@dr["CountryCode"]</td>
                 <td>@Convert.ToDateTime(dr["Created"]).ToString("dd-MM-yy")</td>
                 <td>@Convert.ToDateTime(dr["Modified"]).ToString("dd-MM-yy")</td>
+                    <td>
+                        <a asp-area="LOC_State" asp-controller="LOC_State" asp-action="Index" asp-route-CountryID="@dr["CountryID"]">
+                                @dr["StateCount"]
+                        </a>
+                    </td>
 
+                    <td>
+                        <a asp-area="LOC_City" asp-controller="LOC_City" asp-action="Index" asp-route-CountryID="@dr["CountryID"]">
+                                @dr["CityCount"]
+                        </a>
+                    </td>
                     <td>
                         <div class="w-75 btn-group" role="group">
                             
                                 <a asp-area="LOC_Country" asp-controller="LOC_Country" asp-action="Delete" asp-route-CountryID="@dr["CountryID"]" class="btn btn-danger mx-2" onclick="fun1()">
-                                    <i class="bi bi-trash-fill"></i> Delete
+                                    <i class="bi bi-trash-fill"></i>
                                 </a>
 
                             <a asp-area="LOC_Country" asp-controller="LOC_Country" asp-action="Create" asp-route-CountryID="@dr["CountryID"]" class="btn btn-primary mx-2">
-                                <i class="bi bi-pencil-square"></i> Edit
+                                <i class="bi bi-pencil-square"></i>
                             </a>
                             
 
@@ -128,4 +143,6 @@
         }
     </script>
 }
+
+
 

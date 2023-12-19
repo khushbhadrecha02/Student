@@ -42,6 +42,7 @@ namespace StudentDemo.Areas.LOC_Country.Controllers
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             LOC_DAL dal = new LOC_DAL();
             dal.PR_Country_DeleteByPK(str,CountryID);
+            TempData["Success"] = ("Country Deleted Successfully");
             return RedirectToAction("Index");
         }
         #endregion

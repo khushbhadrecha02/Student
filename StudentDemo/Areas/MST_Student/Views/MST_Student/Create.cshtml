@@ -3,11 +3,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @model MST_StudentModel
-<section class="section" style="margin-top: 100px;">
-    <!-- Add margin-top here -->
 
 
-    <div class="row">
+
+<div class="row">
         <div class="col-lg-9 mx-auto">
             <div class="card shadow border-0 mt-4">
                 <div class="card-header ml-0 py-3">
@@ -26,6 +25,7 @@
                     </select>
 
                     <label class="ms-2">Branch Name</label>
+                            <span asp-validation-for="BranchID" class="text-danger"></span>
                 </div>
                 <div class="form-floating py-2 col-12">
                     <select class="form-control border-0 shadow" asp-for="CityID" asp-items="@(new SelectList(ViewBag.CityList,"CityID","CityName"))">
@@ -33,6 +33,7 @@
                     </select>
 
                     <label class="ms-2">City Name</label>
+                    <span asp-validation-for="CityID" class="text-danger"></span>
                 </div>
                 @*@<div asp-validation-summary="ModelOnly"></div>*@
                 <div class="form-floating py-2 col-12">
@@ -119,7 +120,6 @@
     </div>
 </div>
 </div>
-</section>
 @section Scripts{
     @{
         <partial name="_ValidationScriptsPartial" />

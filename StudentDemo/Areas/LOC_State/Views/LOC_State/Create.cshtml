@@ -3,11 +3,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @model LOC_StateModel
-<section class="section" style="margin-top: 100px;">
-    <!-- Add margin-top here -->
 
 
-    <div class="row">
+
+<div class="row">
         <div class="col-lg-9 mx-auto">
             <div class="card shadow border-0 mt-4">
                 <div class="card-header ml-0 py-3">
@@ -30,6 +29,7 @@
                     </select>
 
                     <label class="ms-2">Country Name</label>
+                    <span asp-validation-for="CountryID" class="text-danger"></span>
                     
                 </div>
                 <div class="form-floating py-2 col-12">
@@ -64,7 +64,6 @@
 </div>
 </div>
 </div>
-</section>
 @section Scripts{
     @{
         <partial name="_ValidationScriptsPartial" />

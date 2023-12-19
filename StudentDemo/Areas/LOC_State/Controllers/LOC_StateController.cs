@@ -21,14 +21,51 @@ namespace StudentDemo.Areas.LOC_State.Controllers
         #endregion
 
         #region Index
-        public IActionResult Index()
+        public IActionResult Index(int? CountryID)
         {
+            #region ComboBox
+            string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
+            LOC_DAL dal1 = new LOC_DAL();
+            DataTable dt1 = dal1.PR_Country_SelectByComboBox(connstr);
+            List<LOC_Country_DropDownModel> list = new List<LOC_Country_DropDownModel>();
+            foreach (DataRow dr in dt1.Rows)
+            {
+                LOC_Country_DropDownModel vlst = new LOC_Country_DropDownModel();
+                vlst.CountryID = Convert.ToInt32(dr["CountryID"]);
+                vlst.CountryName = Convert.ToString(dr["CountryName"]);
+                list.Add(vlst);
+
+            }
+            ViewBag.CountryList = list;
+
+            #endregion
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             LOC_DAL dal = new LOC_DAL();
-            DataTable dt = dal.PR_State_SelectAll(str);
-            return View("Index", dt);
+            DataTable dt;
+            LOC_State_SearchModel searchModel = new LOC_State_SearchModel();
+            searchModel.CountryID = CountryID;
+            if (CountryID != null)
+            {
+                dt = dal.PR_State_SelectByPage(str, searchModel.CountryID, null, null);
+
+            }
+            else
+            {
+                 dt = dal.PR_State_SelectAll(str);
+            }
+            var viewModel = new LOC_State_ViewModel
+            {
+                StateDataTable = dt,
+                SearchModel = new LOC_State_SearchModel()
+            };
+
+            return View("Index", viewModel);
+
+
+
         }
         #endregion
+
 
         #region Delete
         public IActionResult Delete(int StateID)
@@ -36,6 +73,7 @@ namespace StudentDemo.Areas.LOC_State.Controllers
             string str = this.Configuration.GetConnectionString("myConnectionStrings");
             LOC_DAL dal = new LOC_DAL();
             dal.PR_State_DeleteByPK(str,StateID);
+            TempData["Success"] = ("State Deleted Successfully");
             return RedirectToAction("Index");
         }
         #endregion
@@ -118,6 +156,37 @@ namespace StudentDemo.Areas.LOC_State.Controllers
 
             return RedirectToAction("Index");
         }
+        #endregion
+        #region Search
+        [HttpPost]
+        public IActionResult Search(LOC_State_SearchModel searchModel)
+        {
+            string str = this.Configuration.GetConnectionString("myConnectionStrings");
+            LOC_DAL dal = new LOC_DAL();
+            DataTable dt = dal.PR_State_SelectByPage(str,searchModel.CountryID, searchModel.StateName, searchModel.StateCode);
+            string connstr = this.Configuration.GetConnectionString("myConnectionStrings");
+            LOC_DAL dal1 = new LOC_DAL();
+            DataTable dt1 = dal1.PR_Country_SelectByComboBox(connstr);
+            List<LOC_Country_DropDownModel> list = new List<LOC_Country_DropDownModel>();
+            foreach (DataRow dr in dt1.Rows)
+            {
+                LOC_Country_DropDownModel vlst = new LOC_Country_DropDownModel();
+                vlst.CountryID = Convert.ToInt32(dr["CountryID"]);
+                vlst.CountryName = Convert.ToString(dr["CountryName"]);
+                list.Add(vlst);
+            }
+            ViewBag.CountryList = list;
+
+            var viewModel = new LOC_State_ViewModel
+            {
+                StateDataTable = dt,
+                SearchModel = searchModel,
+            };
+
+            return View("Index", viewModel);
+        }
+
+
         #endregion
 
     }

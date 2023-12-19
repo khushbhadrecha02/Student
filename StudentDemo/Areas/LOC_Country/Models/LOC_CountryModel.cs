@@ -14,6 +14,8 @@ namespace StudentDemo.Areas.LOC_Country.Models
         [Required]
         [DisplayName("Country Code")]
         public string CountryCode { get; set; }
+        public int StateCount { get; set; } 
+
 
 
 
